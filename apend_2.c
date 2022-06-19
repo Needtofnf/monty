@@ -1,105 +1,102 @@
 #include "monty.h"
 
 /**
- * _add - addition of the first two values at top of stack
+ * _queue - sets the format of the data to a queue (FIFO)
  *
- * @stack: the program stack
- * @line_nb: the line number
+ * @doubly: head of the linked list
+ * @cline: line number;
+ * Return: no return
  */
-
-void _add(stack_t **stack, unsigned int line_nb)
+void _queue(stack_t **doubly, unsigned int cline)
 {
-	if (!*stack || !stack || !(*stack)->next)
-	{
-		fprintf(stderr, "L%d: can't add, stack too short\n", line_nb);
-		META.error = 1;
-	}
-	else
-	{
-		_math(stack, '+');
-	}
+	(void)doubly;
+	(void)cline;
+
+	vglo.lifo = 0;
 }
 
 /**
- * _sub - substraction of top of stack from 2nd top of stack
+ * _stack - sets the format fo the data to a stack (LIFO)
  *
- * @stack: the program stack
- * @line_nb: the line number
+ * @doubly: head of the linked list
+ * @cline: line number;
+ * Return: no return
  */
-
-void _sub(stack_t **stack, unsigned int line_nb)
+void _stack(stack_t **doubly, unsigned int cline)
 {
-	if (!*stack || !stack || !(*stack)->next)
-	{
-		fprintf(stderr, "L%d: can't sub, stack too short\n", line_nb);
-		META.error = 1;
-	}
-	else
-	{
-		_math(stack, '-');
-	}
+	(void)doubly;
+	(void)cline;
+
+	vglo.lifo = 1;
 }
 
 /**
- * _div - division of second top of stack by top of stack
+ * _add - adds the top two elements of the stack
  *
- * @stack: the program stack
- * @line_nb: the line number
+ * @doubly: head of the linked list
+ * @cline: line number;
+ * Return: no return
  */
-
-void _div(stack_t **stack, unsigned int line_nb)
+void _add(stack_t **doubly, unsigned int cline)
 {
-	if (!*stack || !stack || !(*stack)->next)
+	int m = 0;
+	stack_t *aux = NULL;
+
+	aux = *doubly;
+
+	for (; aux != NULL; aux = aux->next, m++)
+		;
+
+	if (m < 2)
 	{
-		fprintf(stderr, "L%d: can't div, stack too short\n", line_nb);
-		META.error = 1;
+		dprintf(2, "L%u: can't add, stack too short\n", cline);
+		free_vglo();
+		exit(EXIT_FAILURE);
 	}
-	else
-	{
-		_math(stack, '/');
-		if (META.error == 1)
-			fprintf(stderr, "L%d: division by zero\n", line_nb);
-	}
+
+	aux = (*doubly)->next;
+	aux->n += (*doubly)->n;
+	_pop(doubly, cline);
 }
 
 /**
- * _mul - multiplication of the two values at top of stack
+ * _nop - doesn't do anythinhg
  *
- * @stack: the program stack
- * @line_nb: the line number
+ * @doubly: head of the linked list
+ * @cline: line number;
+ * Return: no return
  */
-
-void _mul(stack_t **stack, unsigned int line_nb)
+void _nop(stack_t **doubly, unsigned int cline)
 {
-	if (!*stack || !stack || !(*stack)->next)
-	{
-		fprintf(stderr, "L%d: can't mul, stack too short\n", line_nb);
-		META.error = 1;
-	}
-	else
-	{
-		_math(stack, '*');
-	}
+	(void)doubly;
+	(void)cline;
 }
 
 /**
- * _mod - modulo of second top of stack by top of stack
+ * _sub - subtracts the top element to the second top element of the stack
  *
- * @stack: the program stack
- * @line_nb: the line number
+ * @doubly: head of the linked list
+ * @cline: line number;
+ * Return: no return
  */
-
-void _mod(stack_t **stack, unsigned int line_nb)
+void _sub(stack_t **doubly, unsigned int cline)
 {
-	if (!*stack || !stack || !(*stack)->next)
+	int m = 0;
+	stack_t *aux = NULL;
+
+	aux = *doubly;
+
+	for (; aux != NULL; aux = aux->next, m++)
+		;
+
+	if (m < 2)
 	{
-		fprintf(stderr, "L%d: can't mod, stack too short\n", line_nb);
-		META.error = 1;
+		dprintf(2, "L%u: can't sub, stack too short\n", cline);
+		free_vglo();
+		exit(EXIT_FAILURE);
 	}
-	else
-	{
-		_math(stack, '%');
-		if (META.error == 1)
-			fprintf(stderr, "L%d: division by zero\n", line_nb);
-	}
+
+	aux = (*doubly)->next;
+	aux->n -= (*doubly)->n;
+	_pop(doubly, cline);
 }

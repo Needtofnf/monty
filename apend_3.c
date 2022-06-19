@@ -1,98 +1,149 @@
 #include "monty.h"
 
 /**
- * _pint - prints the value from top of stack
+ * _div - divides the second element by the top element of the stack
  *
- * @stack: the program stack
- * @line_nb: the line number
+ * @doubly: head of the linked list
+ * @cline: line number;
+ * Return: no return
  */
-
-void _pint(stack_t **stack, unsigned int line_nb)
+void _div(stack_t **doubly, unsigned int cline)
 {
-	if (!*stack || !stack)
+	int m = 0;
+	stack_t *aux = NULL;
+
+	aux = *doubly;
+
+	for (; aux != NULL; aux = aux->next, m++)
+		;
+
+	if (m < 2)
 	{
-		fprintf(stderr, "L%d: can't pint, stack empty\n", line_nb);
-		META.error = 1;
+		dprintf(2, "L%u: can't div, stack too short\n", cline);
+		free_vglo();
+		exit(EXIT_FAILURE);
 	}
-	else
+
+	if ((*doubly)->n == 0)
 	{
-		printf("%d\n", (*stack)->n);
+		dprintf(2, "L%u: division by zero\n", cline);
+		free_vglo();
+		exit(EXIT_FAILURE);
 	}
+
+	aux = (*doubly)->next;
+	aux->n /= (*doubly)->n;
+	_pop(doubly, cline);
 }
 
 /**
- * _pall - prints all values from stack, from top to bottom
+ * _mul - multiplies the top element to the second top element of the stack
  *
- * @stack: the program stack
- * @line_nb: the line number
+ * @doubly: head of the linked list
+ * @cline: line number;
+ * Return: no return
  */
-
-void _pall(stack_t **stack, unsigned int line_nb)
+void _mul(stack_t **doubly, unsigned int cline)
 {
-	stack_t *cur = *stack;
-	(void)line_nb;
+	int m = 0;
+	stack_t *aux = NULL;
 
-	while (cur)
+	aux = *doubly;
+
+	for (; aux != NULL; aux = aux->next, m++)
+		;
+
+	if (m < 2)
 	{
-		printf("%d\n", cur->n);
-		cur = cur->next;
+		dprintf(2, "L%u: can't mul, stack too short\n", cline);
+		free_vglo();
+		exit(EXIT_FAILURE);
 	}
+
+	aux = (*doubly)->next;
+	aux->n *= (*doubly)->n;
+	_pop(doubly, cline);
 }
 
 /**
- * _nop - does absolutely nothing with nothing and prints nothing
+ * _mod - computes the rest of the division of the second element
+ * by the top element of the stack
  *
- * @stack: the program stack
- * @line_nb: the line number
+ * @doubly: head of the linked list
+ * @cline: line number;
+ * Return: no return
  */
-
-void _nop(stack_t **stack, unsigned int line_nb)
+void _mod(stack_t **doubly, unsigned int cline)
 {
-	(void)stack;
-	(void)line_nb;
+	int m = 0;
+	stack_t *aux = NULL;
+
+	aux = *doubly;
+
+	for (; aux != NULL; aux = aux->next, m++)
+		;
+
+	if (m < 2)
+	{
+		dprintf(2, "L%u: can't mod, stack too short\n", cline);
+		free_vglo();
+		exit(EXIT_FAILURE);
+	}
+
+	if ((*doubly)->n == 0)
+	{
+		dprintf(2, "L%u: division by zero\n", cline);
+		free_vglo();
+		exit(EXIT_FAILURE);
+	}
+
+	aux = (*doubly)->next;
+	aux->n %= (*doubly)->n;
+	_pop(doubly, cline);
+}
+/**
+ * _pchar - print the char value of the first element
+ *
+ * @doubly: head of the linked list
+ * @cline: line number;
+ * Return: no return
+ */
+void _pchar(stack_t **doubly, unsigned int cline)
+{
+	if (doubly == NULL || *doubly == NULL)
+	{
+		dprintf(2, "L%u: can't pchar, stack empty\n", cline);
+		free_vglo();
+		exit(EXIT_FAILURE);
+	}
+	if ((*doubly)->n < 0 || (*doubly)->n >= 128)
+	{
+		dprintf(2, "L%u: can't pchar, value out of range\n", cline);
+		free_vglo();
+		exit(EXIT_FAILURE);
+	}
+	printf("%c\n", (*doubly)->n);
 }
 
 /**
- * _pchar - prints the value at top of stack as a char
+ * _pstr - prints the string of the stack
  *
- * @stack: the program stack
- * @line_nb: the line number
+ * @doubly: head of the linked list
+ * @cline: line number;
+ * Return: no return
  */
-
-void _pchar(stack_t **stack, unsigned int line_nb)
+void _pstr(stack_t **doubly, unsigned int cline)
 {
-	if (!*stack || !stack)
-	{
-		fprintf(stderr, "L%d: can't pchar, stack empty\n", line_nb);
-		META.error = 1;
-	}
-	else if ((*stack)->n < 0 || (*stack)->n > 127)
-	{
-		fprintf(stderr, "L%d: can't pchar, value out of range\n", line_nb);
-		META.error = 1;
-	}
-	else
-	{
-		printf("%c\n", (*stack)->n);
-	}
-}
+	stack_t *aux;
+	(void)cline;
 
-/**
- * _pstr - prints the string starting at the top of the stack
- *
- * @stack: the program stack
- * @line_nb: the line number
- */
+	aux = *doubly;
 
-void _pstr(stack_t **stack, unsigned int line_nb)
-{
-	stack_t *cur = *stack;
-	(void)line_nb;
-
-	while (cur && (cur->n > 0 && cur->n <= 127))
+	while (aux && aux->n > 0 && aux->n < 128)
 	{
-		printf("%c", cur->n);
-		cur = cur->next;
+		printf("%c", aux->n);
+		aux = aux->next;
 	}
+
 	printf("\n");
 }
